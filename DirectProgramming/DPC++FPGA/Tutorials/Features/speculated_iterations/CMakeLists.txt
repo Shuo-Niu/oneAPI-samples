@@ -1,8 +1,5 @@
-if(WIN32)
-  set(CMAKE_CXX_COMPILER "dpcpp-cl")
-else()
-  set(CMAKE_CXX_COMPILER "dpcpp")
-endif()
+set(CMAKE_CXX_COMPILER "dpcpp")
+
 cmake_minimum_required (VERSION 2.8)
 
 project(SpeculatedIterations)
