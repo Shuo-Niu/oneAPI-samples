@@ -119,12 +119,27 @@ double CrrSolver(const int n_items, vector<CRRMeta> &in_params,
       (((n_items + (OUTER_UNROLL - 1)) / OUTER_UNROLL) * OUTER_UNROLL) * 3;
 
   {
-    buffer<CRRMeta, 1> i_params(in_params.data(), in_params.size());
-    buffer<CRRResParams, 1> r_params(res_params.data(), res_params.size());
-    buffer<CRRPerStepMeta, 1> a_params(in_params2.data(), in_params2.size());
+    buffer<CRRMeta, 1> i_params(in_params.size());
+    buffer<CRRPerStepMeta, 1> a_params(in_params2.size());
+    buffer<CRRResParams, 1> r_params(res_params.size());
+    r_params.set_final_data(res_params.data());
 
     event e;
     {
+      // copy the input buffers
+      q.submit([&](handler& h) {
+        auto accessor_v =
+          i_params.template get_access<access::mode::discard_write>(h);
+        h.copy(in_params.data(), accessor_v);
+      });
+
+      q.submit([&](handler& h) {
+        auto accessor_v2 =
+          a_params.template get_access<access::mode::discard_write>(h);
+        h.copy(in_params2.data(), accessor_v2);
+      });
+      
+      // start the main kernel
       e = q.submit([&](handler &h) {
         auto accessor_v =
             i_params.template get_access<access::mode::read_write>(h);
