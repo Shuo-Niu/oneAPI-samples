@@ -1,5 +1,8 @@
-set(CMAKE_CXX_COMPILER "dpcpp")
-
+if(WIN32)
+  set(CMAKE_CXX_COMPILER "dpcpp-cl")
+else()
+  set(CMAKE_CXX_COMPILER "dpcpp")
+endif()
 cmake_minimum_required (VERSION 2.8)
 
 project(LoopIvdep)
