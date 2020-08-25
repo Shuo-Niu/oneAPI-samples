@@ -20,7 +20,7 @@ constexpr size_t kMaxValue = 128;
 using FloatArray = std::array<float, kSize>;
 using FloatScalar = std::array<float, 1>;
 
-template <int concurrency> class Compute;
+template <int concurrency> class Kernel;
 
 // Launch a kernel on the device specified by selector.
 // The kernel's functionality is designed to show the
@@ -43,7 +43,7 @@ void PartialSumWithShift(const device_selector &selector,
       auto accessor_array = buffer_array.get_access<access::mode::read>(h);
       auto accessor_result = buffer_result.get_access<access::mode::discard_write>(h);
 
-      h.single_task<Compute<concurrency>>([=]()
+      h.single_task<Kernel<concurrency>>([=]()
                                           [[intel::kernel_args_restrict]] {
         float r = 0;
 
